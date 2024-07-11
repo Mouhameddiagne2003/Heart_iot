@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./back
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+      - mqtt
+
+  frontend:
+    build: ./front
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  mqtt:
+    image: eclipse-mosquitto:latest
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
